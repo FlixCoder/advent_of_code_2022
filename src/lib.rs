@@ -8,7 +8,7 @@ use clap::Parser;
 #[derive(Debug, Parser)]
 pub struct Cli {
 	/// Advent of Code day.
-	#[arg(value_parser = clap::value_parser!(u8).range(1..24))]
+	#[arg(value_parser = clap::value_parser!(u8).range(1..=25))]
 	day: u8,
 }
 
