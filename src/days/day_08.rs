@@ -13,6 +13,10 @@ pub fn run() {
 	let num_visible = grid.visible_tree_grid().count();
 	println!("Number of visible trees: {num_visible}");
 	println!();
+
+	println!("Part 2:");
+	let scenic_score = grid.best_scenic_score();
+	println!("Best scenic score: {scenic_score}");
 }
 
 /// The grid of trees.
@@ -69,6 +73,57 @@ impl Grid<u8> {
 
 		Grid { width: self.width, data: visible }
 	}
+
+	/// Calculate the scenic score for position (x, y).
+	/// Panics if out of bounds.
+	fn scenic_score(&self, x: usize, y: usize) -> u64 {
+		let value = self.get(x, y);
+
+		let mut left_trees = 0;
+		for xx in (0..x).rev() {
+			left_trees += 1;
+			if self.get(xx, y) >= value {
+				break;
+			}
+		}
+
+		let mut right_trees = 0;
+		for xx in x + 1..self.width() {
+			right_trees += 1;
+			if self.get(xx, y) >= value {
+				break;
+			}
+		}
+
+		let mut top_trees = 0;
+		for yy in (0..y).rev() {
+			top_trees += 1;
+			if self.get(x, yy) >= value {
+				break;
+			}
+		}
+
+		let mut bottom_trees = 0;
+		for yy in y + 1..self.height() {
+			bottom_trees += 1;
+			if self.get(x, yy) >= value {
+				break;
+			}
+		}
+
+		left_trees as u64 * right_trees as u64 * top_trees as u64 * bottom_trees as u64
+	}
+
+	/// Get the best scenic score in the forrest.
+	pub fn best_scenic_score(&self) -> u64 {
+		let mut max = 0;
+		for y in 0..self.height() {
+			for x in 0..self.width() {
+				max = max.max(self.scenic_score(x, y));
+			}
+		}
+		max
+	}
 }
 
 impl Grid<bool> {
@@ -112,11 +167,20 @@ mod tests {
 35390"#;
 
 	#[test]
-	fn test_example() {
+	fn example_part1() {
 		let grid: Grid<u8> = EXAMPLE_GRID.parse().expect("parsing");
-		assert!(!grid.is_visible(3, 1));
 
+		assert!(!grid.is_visible(3, 1));
 		let num_visible = grid.visible_tree_grid().count();
 		assert_eq!(num_visible, 21);
+	}
+
+	#[test]
+	fn example_part2() {
+		let grid: Grid<u8> = EXAMPLE_GRID.parse().expect("parsing");
+
+		assert_eq!(grid.scenic_score(2, 1), 4);
+		assert_eq!(grid.scenic_score(2, 3), 8);
+		assert_eq!(grid.best_scenic_score(), 8);
 	}
 }
