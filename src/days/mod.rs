@@ -7,6 +7,7 @@ mod day_04;
 mod day_05;
 mod day_06;
 mod day_07;
+mod day_08;
 
 /// Run specific AoC day.
 pub fn run(day: u8) {
@@ -18,6 +19,7 @@ pub fn run(day: u8) {
 		5 => day_05::run(),
 		6 => day_06::run(),
 		7 => day_07::run(),
+		8 => day_08::run(),
 		_ => unimplemented!(),
 	}
 }
